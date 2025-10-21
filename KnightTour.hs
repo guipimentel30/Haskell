@@ -1,3 +1,5 @@
+import System.Environment (getArgs)
+
 data Posicao = Posicao Int Int deriving (Show)
 data Dimensao = Dimensao Int Int deriving (Show)
 
@@ -45,8 +47,8 @@ movimentosValidos lista dim = (aplicaFiltro listaMovimentoCavalo)
 
         filtro :: Posicao -> Bool
         filtro pos =
-            (0 < getX pos && getX pos < getW dim) &&
-            (0 < getY pos && getY pos < getH dim) &&
+            (0 < getX pos && getX pos <= getW dim) &&
+            (0 < getY pos && getY pos <= getH dim) &&
             not (inLista pos lista)
 
         
@@ -56,34 +58,39 @@ movimentosValidos lista dim = (aplicaFiltro listaMovimentoCavalo)
             | filtro h  = h : aplicaFiltro t
             | otherwise = aplicaFiltro t
 
-        
--- Dado uma posição
--- Queremos percorrer sobre todos os movimentos possíveis do cavalo
--- E eliminar as posições que: Já percorremos; Ultrapassam os limites do tabuleiro.
+passeio :: Posicao -> Dimensao -> [Posicao]
+passeio pos dim = reverse (auxiliar [pos] dim)
+    where
+        testarMovimentos :: [Posicao] -> [Posicao] -> Dimensao -> [Posicao]
+        testarMovimentos [] posicoes dim = []
+        testarMovimentos (h:t) posicoes dim 
+            | length movimentoTestado /= 0 = movimentoTestado
+            | otherwise = testarMovimentos t posicoes dim
+            where
+                movimentoTestado = auxiliar (h:posicoes) dim 
+        -- testarMovimentos movimentos posicoes dim
 
--- A função recebe: a lista de posições anteriores do cavalo; dimensão do tabuleiro
--- 1) Pegar posição atual do cavalo
--- 2) Pegar a possível lista de posições do cavalo
--- 3) Iterar sobre essa lista de possíveis posições do cavalo
--- 4) Aplicar um filtro: se passar no filto, continua na lista. Se não, sai da lista.
+        auxiliar :: [Posicao] -> Dimensao -> [Posicao]
+        auxiliar lista dim 
+            | ((getW dim) * (getH dim)) == (length lista) = lista
+            | length movimentos == 0 = []
+            | otherwise = testarMovimentos movimentos lista dim
+            where 
+                movimentos = movimentosValidos lista dim
 
+parseLine :: String -> [Int]
+parseLine line =
+  map read (words line)
 
--- 0 < (getX pos) && (getX pos) < w
--- 0 < (getY pos) && (getY pos) < h
--- not (inLista pos lista)
+iteracao ::[Int] -> IO()
+iteracao [rows, cols, startRow, startCol] = do
+    putStrLn $ "Achando solução para " ++ show rows ++ "x" ++ show cols ++ " iniciando (" ++ show startRow ++ "," ++ show startCol ++ ")..."
+    printLn (passeio (Posicao startRow startCol) (Dimensao rows cols))
 
-
-
--- passeio :: Posicao -> Dimensao -> ListaPosicao
--- passeio (Posisao pos) (Dimensao d) =
-
-main :: IO () 
+main :: IO ()
 main = do
-    let listaExemplo = [Posicao 1 2, Posicao 3 4, Posicao 5 6]
-    print listaExemplo
-    print (inLista (Posicao 1 2) listaExemplo)
-    -- print (movimentosValidos (Posicao 1 1))
-    print (movimentosValidos [Posicao 4 4] (Dimensao 4 8))
-
-
-
+    let filename = "dados.txt"
+    content <- readFile filename
+    let variaveisArmazenadas = map parseLine (lines content)
+    mapM_ iteracao variaveisArmazenadas
+    print variaveisArmazenadas
