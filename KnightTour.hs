@@ -84,7 +84,7 @@ parseLine line =
 
 iteracao ::[Int] -> IO()
 iteracao [rows, cols, startRow, startCol] = do
-    putStrLn $ "Achando solução para " ++ show rows ++ "x" ++ show cols ++ " iniciando (" ++ show startRow ++ "," ++ show startCol ++ ")..."
+    putStrLn $ "Achando solucao para " ++ show rows ++ "x" ++ show cols ++ " iniciando (" ++ show startRow ++ "," ++ show startCol ++ ")..."
     printLn (passeio (Posicao startRow startCol) (Dimensao rows cols))
 
 main :: IO ()
