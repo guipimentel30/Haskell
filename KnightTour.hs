@@ -68,29 +68,60 @@ passeio pos dim = reverse (auxiliar [pos] dim)
             | otherwise = testarMovimentos t posicoes dim
             where
                 movimentoTestado = auxiliar (h:posicoes) dim 
-        -- testarMovimentos movimentos posicoes dim
 
         auxiliar :: [Posicao] -> Dimensao -> [Posicao]
         auxiliar lista dim 
-            | ((getW dim) * (getH dim)) == (length lista) = lista
-            | length movimentos == 0 = []
-            | otherwise = testarMovimentos movimentos lista dim
+            | ((getW dim) * (getH dim)) == (length lista) =
+                if not (inLista (head lista) (movimentos (last lista)))                 
+                then lista
+                else []
+            | length movs == 0 = []
+            | otherwise = testarMovimentos movs lista dim
             where 
-                movimentos = movimentosValidos lista dim
+            movs = movimentosValidos lista dim
 
-parseLine :: String -> [Int]
-parseLine line =
-  map read (words line)
+divideLinha :: String -> [Int]
+divideLinha linha =
+  map read (words linha)
+
+formataPasso :: Posicao -> String
+formataPasso (Posicao x y) = "(" ++ show x ++ "," ++ show y ++ ")"
+
+
+formataCaminho :: [Posicao] -> String 
+formataCaminho [] = ""
+formataCaminho [p] = formataPasso p
+formataCaminho (h:t) = formataPasso h ++ " -> "++ formataCaminho t
+
+printResultado :: [Posicao] -> IO ()
+printResultado [] =  putStrLn "Nao ha solucao valida"
+printResultado caminho = do
+    putStrLn $ formataCaminho caminho
+
 
 iteracao ::[Int] -> IO()
-iteracao [rows, cols, startRow, startCol] = do
-    putStrLn $ "Achando solução para " ++ show rows ++ "x" ++ show cols ++ " iniciando (" ++ show startRow ++ "," ++ show startCol ++ ")..."
-    printLn (passeio (Posicao startRow startCol) (Dimensao rows cols))
+iteracao [rows, cols, startRow, startCol]
+    | rows <= 0 || cols <= 0 =
+        putStrLn $ "Dimensao invalida na entrada (" ++ show rows ++ " " ++ show cols ++ " " ++ show startRow ++ " " ++ show startCol ++ "). As dimensoes devem ser maiores ou iguais a 1"
+    | startRow <= 0 || startCol <= 0 =
+        putStrLn $ "Posicao inicial invalida na entrada (" ++ show rows ++ " " ++ show cols ++ " " ++ show startRow ++ " " ++ show startCol ++ "). As colunas e linhas devem ser maiores ou iguais a 1."
+    | startRow > rows || startCol > cols =
+        putStrLn $ "Posicao inicial fora do tabuleiro na entrada (" ++ show rows ++ " " ++ show cols ++ " " ++ show startRow ++ " " ++ show startCol ++ ")."
+    | otherwise = do
+        putStrLn $ "Achando solucao para " ++ show rows ++ "x" ++ show cols ++ " iniciando em (" ++ show startRow ++ "," ++ show startCol ++ ")"
+        printResultado (passeio (Posicao startRow startCol) (Dimensao rows cols))
 
 main :: IO ()
 main = do
-    let filename = "dados.txt"
-    content <- readFile filename
-    let variaveisArmazenadas = map parseLine (lines content)
-    mapM_ iteracao variaveisArmazenadas
-    print variaveisArmazenadas
+  args <- getArgs
+  filename <- case args of
+    [arg] -> return arg
+    _ -> do
+      putStrLn "Insira seu arquivo de entrada:"
+      getLine
+
+  putStrLn $ "Lendo " ++ filename
+  content <- readFile filename
+  let variaveisArmazenadas = map divideLinha (lines content)
+  mapM_ iteracao variaveisArmazenadas
+
