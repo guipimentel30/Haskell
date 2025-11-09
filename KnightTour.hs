@@ -40,23 +40,35 @@ movimentos (Posicao x y) = [
     Posicao (x-1) (y-2)]
 
 movimentosValidos :: [Posicao] -> Dimensao -> [Posicao]
-movimentosValidos lista dim = (aplicaFiltro listaMovimentoCavalo)
-    where 
-        posicao_inicial = head lista
-        listaMovimentoCavalo = (movimentos posicao_inicial)
+movimentosValidos lista dim =
+   
+    sortBy (comparing contaMovimentos) movimentosNaoOrdenados -- lista de movimentos ordenada pela contagem
 
-        filtro :: Posicao -> Bool
-        filtro pos =
-            (0 < getX pos && getX pos <= getW dim) &&
-            (0 < getY pos && getY pos <= getH dim) &&
-            not (inLista pos lista)
+  where 
+    posicao_inicial = head lista
+    listaMovimentoCavalo = (movimentos posicao_inicial)
 
-        
-        aplicaFiltro :: [Posicao] -> [Posicao]
-        aplicaFiltro [] = []
-        aplicaFiltro (h:t)
-            | filtro h  = h : aplicaFiltro t
-            | otherwise = aplicaFiltro t
+    filtro :: Posicao -> Bool
+    filtro pos =
+        (0 < getX pos && getX pos <= getW dim) &&
+        (0 < getY pos && getY pos <= getH dim) &&
+        not (inLista pos lista)
+
+    aplicaFiltro :: [Posicao] -> [Posicao]
+    aplicaFiltro [] = []
+    aplicaFiltro (h:t)
+        | filtro h  = h : aplicaFiltro t
+        | otherwise = aplicaFiltro t
+
+    movimentosNaoOrdenados = aplicaFiltro listaMovimentoCavalo
+
+    contaMovimentos :: Posicao -> Int
+    contaMovimentos proxPos =
+        let
+            movimentosBrutos = movimentos proxPos
+            movimentosValidosFuturos = filter filtro movimentosBrutos
+        in
+            length movimentosValidosFuturos
 
 passeio :: Posicao -> Dimensao -> [Posicao]
 passeio pos dim = reverse (auxiliar [pos] dim)
