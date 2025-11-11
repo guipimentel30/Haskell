@@ -1,4 +1,7 @@
 import System.Environment (getArgs)
+import Data.List
+import Data.Ord
+
 
 data Posicao = Posicao Int Int deriving (Show)
 data Dimensao = Dimensao Int Int deriving (Show)
@@ -41,7 +44,6 @@ movimentos (Posicao x y) = [
 
 movimentosValidos :: [Posicao] -> Dimensao -> [Posicao]
 movimentosValidos lista dim =
-   
     sortBy (comparing contaMovimentos) movimentosNaoOrdenados -- lista de movimentos ordenada pela contagem
 
   where 
