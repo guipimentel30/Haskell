@@ -1,22 +1,24 @@
-*Objetivo:* implementar uma variante do problema do Passeio do Cavalo.
+# Integrantes
 
-*Descrição:* O programa deve ler um arquivo de texto cuja estrutura consiste em uma sequência de linhas com quatro valores inteiros em cada uma separados por um espaço em branco. Os dois primeiros valores denotam a dimensão de um tabuleiro de xadrez (linhas x colunas); os dois posteriores denotam uma posição no tabuleiro (linha x coluna). Para cada linha do arquivo, o programa deve verificar se, seguindo as regras tradicionais do movimento do cavalo no xadrez, é possível encontrar um caminho aberto em que o cavalo percorra todo o tabuleiro, isto é, em que ele consiga passar por todas as posições, sem nenhuma repetição e sem que a primeira posição possa ser alcançada imediatamente após a última.
+Guilherme Oliveira Pimentel
+Juliana Alves Poustka
+Mateus Regasi Gomes Martins
 
-*Entrada:* um arquivo texto
-*Saída:* saída na tela com cada caminho encontrado ou informação de que não é possível
+# Breve resumo
 
-Linguagem de programação
+Primeiramente, foram elaboradas pelos integrantes Guilherme e Juliana a função “main” e as funções “parseLine” e “iteração”, a fim de ler os dados de entrada do usuário. posteriormente, a função “parseLine” foi descartada e a main foi adaptada para ler um arquivo .txt (linhas de texto) e aplicar no algoritmo.
 
-e) Haskell
+Posteriormente,em dupla, Mateus e Guilherme definiram o “Posicao” e “Dimensao”, seus construtores e getters. 
+Fizeram, também, a função “posEq” que checa se duas coordenadas são equivalentes. Função essa usada mais tarde na função InList, que por sua vez checa se uma posição já está dentro da lista de caminhos percorridos. 
 
-Entregáveis
+A partir daqui, o trabalho foi feito em trio por ligação. Foram feitas as funções “movimentos”, que definia os movimentos “brutos” do cavalo. Após ela, a função “movimentosVálidos”, cuja principal responsabilidade é, a partir da posição atual do cavalo, determinar para quais casas futuras ele pode pular.
+Dentro da cláusula “where” desta função, existem as funções auxiliares locais filtro e “aplicaFiltro”. A função filtro checa se um movimento é válido de acordo com as condições estabelecidas. Já a função “aplicaFiltro” é uma função recursiva que percorre a lista de movimentos aplicando o “filtro” a cada um deles e mantendo apenas os que passam no teste.
 
-g) Código fonte
+A função “passeio” é o ponto de entrada que inicia o algoritmo de busca. Ela utiliza duas funções auxiliares recursivas, definidas na cláusula “where”, para realizar o backtracking. 
+A função auxiliar inspeciona o estado atual do caminho (lista) e determina se é um estado folha ou se a busca deve prosseguir. Já a função “testarMovimentos” itera sobre um conjunto de movimentos e explora cada um deles sequencialmente.
 
-h) Makefile e/ou roteiro completo de compilação/execução
+# Rascunhos
 
-i) Arquivos de exemplos de uso
-
-j) Apresentação do trabalho (data da atividade prevê a data limite para apresentação, não apenas entrega, podendo esta ocorrer antes).
-
-k) O trabalho pode ser feito individualmente ou em dupla ou em trio. Não serão aceitas entregas com mais integrantes. Em caso de mais de um integrante deverá ser anexado um relatório que descreva a atuação de cada membro.
+![](img/1.png)
+![](img/2.png)
+![](img/3.png)
